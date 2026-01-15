@@ -1,8 +1,7 @@
 
-import { PrismaClient } from "../../prisma/generated";
+import { prisma } from '../lib/prisma';
 import { Request, Response } from "express";
 
-const prisma = new PrismaClient();
 
 export async function listBlogs(req: Request, res: Response) {
   const page = Number(req.query.page ?? 1);
