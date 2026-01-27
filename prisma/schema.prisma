@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "./generated"
@@ -14,26 +8,70 @@ datasource db {
 }
 
 
+// --------------------
+// USER MODEL (NEW)
+// --------------------
+model User {
+  id        Int         @id @default(autoincrement())
+  username      String?
+  email     String       @unique
+  password  String       // hashed password
+  createdAt DateTime     @default(now())
+
+  // Relations
+  blogPosts  BlogPost[]
+  imagePosts ImagePost[]
+  comments   Comment[]
+}
+
+
+// --------------------
+// BLOG POST MODEL
+// --------------------
 model BlogPost {
   id           Int      @id @default(autoincrement())
   title        String
   description  String
   viewCount    Int      @default(0)
   publishedAt  DateTime @default(now())
+
+  // User Relation
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+
+// --------------------
+// IMAGE POST MODEL
+// --------------------
 model ImagePost {
-  id           Int       @id @default(autoincrement())
+  id           Int        @id @default(autoincrement())
   imageUrl     String
   caption      String
-  publishedAt  DateTime  @default(now())
+  publishedAt  DateTime   @default(now())
+
+  // User Relation
+  userId       Int
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   comments     Comment[]
 }
 
+
+// --------------------
+// COMMENT MODEL
+// --------------------
 model Comment {
   id          Int       @id @default(autoincrement())
   text        String
+
+  // Image Post Relation
   imagePostId Int
   imagePost   ImagePost @relation(fields: [imagePostId], references: [id], onDelete: Cascade)
+
+  // Optional: Allow comments to have a user
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   createdAt   DateTime  @default(now())
 }

@@ -19,7 +19,14 @@ export async function listBlogs(req: Request, res: Response) {
 
   res.json({ items, total, page, pageSize });
 }
-
+export async function listBlogsByUserid(req: Request, res: Response) {
+  const userId = Number(req.params.userId);
+  const blogs = await prisma.blogPost.findMany({
+    where: {  userId },
+    include: { user: true },
+  });
+  res.json(blogs);
+}
 export async function getBlog(req: Request, res: Response) {
   const id = Number(req.params.id);
   const blog = await prisma.blogPost.findUnique({ where: { id } });
@@ -28,9 +35,9 @@ export async function getBlog(req: Request, res: Response) {
 }
 
 export async function createBlog(req: Request, res: Response) {
-  const { title, description } = req.body;
+  const { title, description, userId } = req.body;
   const created = await prisma.blogPost.create({
-    data: { title, description }
+    data: { title, description, userId }
   });
   res.status(201).json(created);
 }

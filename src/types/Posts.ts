@@ -5,6 +5,8 @@ export interface IBlogpost {
   description: string;
   viewCount: number;
   publishedAt: string; // ISO string
+  userId: number;
+  user?: IUser;
 }
 
 export interface IImagePost {
@@ -13,4 +15,14 @@ export interface IImagePost {
   caption: string;
   comments: Array<string>;
   publishedAt: string; // ISO string
+  userId: number;
+  user?: IUser;
+}
+
+export interface IUser {
+  id: number;
+  name: string;
+  email: string;
+  blogPosts: IBlogpost[];
+  imagePosts: IImagePost[];
 }
