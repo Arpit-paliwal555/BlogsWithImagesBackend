@@ -21,7 +21,7 @@ export interface IImagePost {
 
 export interface IUser {
   id: number;
-  name: string;
+  username: string;
   email: string;
   blogPosts: IBlogpost[];
   imagePosts: IImagePost[];

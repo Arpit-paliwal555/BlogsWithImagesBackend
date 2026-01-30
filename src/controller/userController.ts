@@ -2,6 +2,7 @@ import { Prisma } from '../../prisma/generated/client';
 import {prisma} from '../lib/prisma';
 import { Request, Response } from "express";
 import { IUser } from '../types/Posts';
+import { ca } from 'zod/v4/locales';
 
 export async function createUser(req: Request, res: Response){
     try{
@@ -38,4 +39,53 @@ export async function createUser(req: Request, res: Response){
     console.error("createUser error:", err);
     return res.status(500).json({ message: "Internal server error" });
 } 
+}
+
+export async function signinUser(req:Request, res:Response ){
+  try{
+    const {email, password} = req.body as {
+      email ?: string,
+      password ?: string
+    }
+    //validation
+    if(!email || !password){
+      return res.status(400).json({
+        message: "email or password missing!"
+      });
+    }
+    //find user
+    const user = await prisma.user.findFirst({
+      where: {email, password},
+      include: {
+        blogPosts:true,
+        imagePosts:true 
+    }});
+    if(user){
+      return res.status(200).json(user);
+    } else {
+      return res.status(404).json({message: "User not found"});
+    }
+  }catch(err){
+    console.error("signinUser error:", err);
+    return res.status(500).json({
+      message: "Internal server error"
+    });
+  }
+}
+
+export async function getUsers(req:Request, res:Response ){
+  try{
+    const users = await prisma.user.findMany({
+      include:{
+        blogPosts:true,
+        imagePosts:true
+      }
+    });
+    return res.status(200).json(users);
+  } catch(err){
+    console.error("getUsers error:", err);
+    return res.status(500).json({
+      message: "Internal server error"
+    });
+  } 
 }
