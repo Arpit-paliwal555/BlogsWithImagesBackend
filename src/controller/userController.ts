@@ -1,8 +1,6 @@
 import { Prisma } from '../../prisma/generated/client';
 import {prisma} from '../lib/prisma';
 import { Request, Response } from "express";
-import { IUser } from '../types/Posts';
-import { ca } from 'zod/v4/locales';
 
 export async function createUser(req: Request, res: Response){
     try{
